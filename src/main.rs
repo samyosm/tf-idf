@@ -4,6 +4,8 @@ use crate::corpus::Corpus;
 
 mod corpus;
 mod document;
+mod token;
+mod tokenizer;
 
 fn main() {
     let corpus: Corpus = vec![

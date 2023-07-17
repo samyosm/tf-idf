@@ -1,27 +1,12 @@
-use core::fmt;
 use std::collections::HashMap;
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
-pub struct Term<'a>(pub &'a str);
-
-impl<'a> fmt::Display for Term<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-impl<'a> From<&'a str> for Term<'a> {
-    fn from(value: &'a str) -> Self {
-        // TODO: Validate token first
-        Term(value)
-    }
-}
+use crate::{token::Token, tokenizer::tokenize};
 
 #[derive(Debug, Clone)]
-pub struct Document<'a>(pub HashMap<Term<'a>, usize>);
+pub struct Document(pub HashMap<Token, usize>);
 
-impl<'a> Document<'a> {
-    pub fn tf(&self, term: &Term) -> Option<f32> {
+impl Document {
+    pub fn tf(&self, term: &Token) -> Option<f32> {
         if let Some(count) = self.0.get(term) {
             // TODO: Implement variants
             Some(*count as f32)
@@ -31,11 +16,11 @@ impl<'a> Document<'a> {
     }
 }
 
-impl<'a> From<&'a str> for Document<'a> {
+impl<'a> From<&'a str> for Document {
     fn from(value: &'a str) -> Self {
         let mut map = HashMap::new();
-        for token in value.split_ascii_whitespace() {
-            map.entry(token.into())
+        for token in tokenize(value) {
+            map.entry(Token(token))
                 .and_modify(|counter| *counter += 1)
                 .or_insert(1);
         }

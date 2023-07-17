@@ -1,12 +1,12 @@
-use crate::document::{Document, Term};
+use crate::{document::Document, token::Token};
 
 #[derive(Debug)]
 // TODO: Add ability to specifiy variants
 // TODO: (maybe) add ability to specifiy tokenization method
-pub struct Corpus<'a>(pub Vec<Document<'a>>);
+pub struct Corpus(pub Vec<Document>);
 
-impl<'a> Corpus<'a> {
-    pub fn idf(&self, term: &Term) -> f32 {
+impl Corpus {
+    pub fn idf(&self, term: &Token) -> f32 {
         let n = self.0.len() as f32;
         let count = self
             .0
@@ -16,8 +16,8 @@ impl<'a> Corpus<'a> {
     }
 }
 
-impl<'a> FromIterator<Document<'a>> for Corpus<'a> {
-    fn from_iter<T: IntoIterator<Item = Document<'a>>>(iter: T) -> Self {
+impl FromIterator<Document> for Corpus {
+    fn from_iter<T: IntoIterator<Item = Document>>(iter: T) -> Self {
         let mut corpus = Corpus(Vec::new());
         for i in iter {
             corpus.0.push(i)
